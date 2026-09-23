@@ -2,4 +2,4 @@
 
 Official implementation of the paper *Abductive Artificial Intelligence Reveals the Laws Underlying Transportation Resilience*.
 
-Code and data are coming soon (before September 21, 2026).
+Code and data are coming soon.
