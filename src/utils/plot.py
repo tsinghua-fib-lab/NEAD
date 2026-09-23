@@ -9,17 +9,17 @@ from typing import List, Dict, Literal, Tuple
 def get_fig(RN, CN, FW=None, FH=None, AW=None, AH=None, A_ratio=1.0, 
             LM=3, RM=3, TM=3, BM=3, HS=None, VS=None, dpi=300,
             fontsize=7, lw=0.5, gridspec=False, **kwargs):
-    # 基础字体和尺寸
+    # Base font and size.
     plt.rcParams['font.family'] = kwargs.get('font_family', 'Arial')
     plt.rcParams['font.size'] = fontsize
-    # --- 字体大小设置 (Font Sizes) ---
+    # Font sizes.
     plt.rcParams['axes.labelsize'] = fontsize
     plt.rcParams['axes.titlesize'] = fontsize
     plt.rcParams['xtick.labelsize'] = fontsize * (5/7)
     plt.rcParams['ytick.labelsize'] = fontsize * (5/7)
     plt.rcParams['legend.fontsize'] = fontsize * (5/7)
     plt.rcParams['figure.titlesize'] = fontsize
-    # --- 线条宽度设置 (Line Widths) ---
+    # Line widths.
     plt.rcParams['lines.linewidth'] = lw
     plt.rcParams['axes.linewidth'] = lw
     plt.rcParams['xtick.major.width'] = lw
@@ -28,7 +28,7 @@ def get_fig(RN, CN, FW=None, FH=None, AW=None, AH=None, A_ratio=1.0,
     plt.rcParams['ytick.minor.width'] = lw
     plt.rcParams['grid.linewidth'] = lw
     plt.rcParams['patch.linewidth'] = lw 
-    # --- 导出设置 (Export Settings) ---
+    # Export settings.
     plt.rcParams['pdf.fonttype'] = 42
     plt.rcParams['svg.fonttype'] = 'none'
 
@@ -93,10 +93,10 @@ def get_fig(RN, CN, FW=None, FH=None, AW=None, AH=None, A_ratio=1.0,
 
 def plot_resilience(f:callable, extent=(0, 1, 0, 1), gridnum=(1000, 1000), cmap=None, norm=None, ax=None, reset_xylim=True, lw=1):
     """
-    绘制二维函数的韧性
-    - f: 二维函数，如 lambda x, y: y - 3*y**2 - y**3 + x*y**3
-    - extent: 函数定义域 (xmin, xmax, ymin, ymax)
-    - gridnum: 网格数量 (xnum, ynum)
+    Plot a two-dimensional resilience function.
+    - f: two-dimensional callable
+    - extent: function domain (xmin, xmax, ymin, ymax)
+    - gridnum: grid resolution (xnum, ynum)
     ---
     Example:
     >>> f = lambda x, y: y - 3*y**2 - y**3 + x*y**3
@@ -156,7 +156,7 @@ def plot_resilience(f:callable, extent=(0, 1, 0, 1), gridnum=(1000, 1000), cmap=
 
 
 class EqualizeNormalize(mcolors.Normalize):
-    """ 按分布而非值进行归一化 """
+    """Normalize by the empirical distribution rather than raw value."""
     def __init__(self, samples, clip=False):
         super().__init__(vmin=samples.min(), vmax=samples.max(), clip=clip)
         hist, bin_edges = np.histogram(samples.flatten(), bins=256, range=(self.vmin, self.vmax), density=True)
@@ -175,7 +175,7 @@ class EqualizeNormalize(mcolors.Normalize):
 def plotOD(ax, source:List[str], destination:List[str], flow:List[float], location:Dict[str, Tuple[float, float]],
            linetype:Literal['straight', 'parabola', 'rotated_parabola', 'projected_parabola']='straight', N=100, zorder=10,
            **kwargs):
-    """ 绘制OD流量 """
+    """Plot origin-destination flows."""
     cmap = mcolors.LinearSegmentedColormap.from_list('cmap', ['#0308F8', '#FD0B1B', '#ffff00'], gamma=5.0)
     norm = EqualizeNormalize(flow.values)
     t = np.linspace(0, 1, N)
@@ -211,13 +211,14 @@ def plotOD(ax, source:List[str], destination:List[str], flow:List[float], locati
 
 def clear_svg(path, debug=False):
     """
-    matplotlib 生成的 svg 中会使用 <text style="font: 9.8px 'Arial'; text-anchor: middle" x="80.307802" y="193.900483">2020-02-02</text> 的语法，而 Powerpoint 无法识别 font: 9.8px 'Arial'; 的简写记法，只能识别 font-family: 'Arial'; font-size: 9.8px; 的记法。因此需要进行转换。考虑的属性包括：
+    Convert Matplotlib's shorthand SVG font declarations into the explicit
+    declarations understood by PowerPoint. Converted properties include:
     - font-size
     - font-family
     - font-weight
     - font-style
     """
-    raise DeprecationWarning("现在好像不需要 clear 了，直接导入 PPT 即可")
+    raise DeprecationWarning("SVG cleanup is no longer needed before importing into PowerPoint.")
     from lxml import etree
     tree = etree.parse(path)
     root = tree.getroot()
@@ -247,9 +248,7 @@ def clear_svg(path, debug=False):
 
 def load_font():
     """
-    - plt.title("示例图表：数字平方", fontproperties=font, size=15)
-    - plt.xlabel("数字", fontproperties=font, size=12)
-    - plt.ylabel("平方", fontproperties=font, size=12)
+    Load a CJK font for plots that require one.
     """
     import requests
     from matplotlib.font_manager import FontProperties
@@ -264,19 +263,19 @@ def load_font():
             raise Exception("Failed to download the font.")
     font = FontProperties(fname=font_path)
     plt.rcParams['font.family'] = 'sans-serif'
-    plt.rcParams['font.sans-serif'] = [font_path]  # 这里指定.otf文件路径
-    plt.rcParams['axes.unicode_minus'] = False  # 正确显示负号
+    plt.rcParams['font.sans-serif'] = [font_path]  # Specify the OTF file path.
+    plt.rcParams['axes.unicode_minus'] = False  # Render minus signs correctly.
     return font
 
 def merge_axes(ax_to_merge, fig=None):
     if fig is None: fig = ax_to_merge[0].figure
-    x0 = min(ax.get_position().bounds[0] for ax in ax_to_merge)  # axes[0, 2] 的左上角坐标
-    y0 = min(ax.get_position().bounds[1] for ax in ax_to_merge)  # axes[0, 2] 的左上角坐标
-    x1 = max(ax.get_position().bounds[0] + ax.get_position().bounds[2] for ax in ax_to_merge)  # axes[1, 3] 的右下角坐标
-    y1 = max(ax.get_position().bounds[1] + ax.get_position().bounds[3] for ax in ax_to_merge)  # axes[1, 3] 的右下角坐标
+    x0 = min(ax.get_position().bounds[0] for ax in ax_to_merge)
+    y0 = min(ax.get_position().bounds[1] for ax in ax_to_merge)
+    x1 = max(ax.get_position().bounds[0] + ax.get_position().bounds[2] for ax in ax_to_merge)
+    y1 = max(ax.get_position().bounds[1] + ax.get_position().bounds[3] for ax in ax_to_merge)
     merged_ax = fig.figure.add_axes([x0, y0, x1 - x0, y1 - y0])
     
-    # 如果 ax_to_merge[0] 被设置与其他的 ax 共享坐标轴，则需要设置 merged_ax 也共享坐标轴
+    # Preserve shared axes here if callers later require that behavior.
     # if ax_to_merge[0].get_shared_x_axes() is not None:
     #     merged_ax.get_shared_x_axes().join(merged_ax, *ax_to_merge)
     # if ax_to_merge[0].get_shared_y_axes() is not None:

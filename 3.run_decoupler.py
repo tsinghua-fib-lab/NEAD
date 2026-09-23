@@ -21,6 +21,7 @@ from src.utils.plot import get_fig
 from src.utils.random import set_seed
 from src.utils.auto_gpu import AutoGPU
 from src.utils.logger import init_logger
+from src.data.io import infer_raw_data_dir
 from src.dataset.dataset import ResilienceDataset
 from src.model.gnn_explainer import MyGNNExplainer, Wrapper
 
@@ -157,7 +158,8 @@ def main(args):
                 fi, fig, axes = get_fig(1, 1, AW=8, AH=8, dpi=100, fontsize=8, lw=0.5)
                 ax = axes[0]
                 
-                gdf = pd.read_csv(f'./data/raw/{cityname}/link.csv')
+                raw_data_dir = infer_raw_data_dir(data_path)
+                gdf = pd.read_csv(raw_data_dir / cityname / 'link.csv')
                 gdf['geometry'] = gdf['geometry'].apply(wkt.loads)
                 gdf = gpd.GeoDataFrame(gdf, geometry='geometry', crs='EPSG:4326').to_crs(epsg=4326)
                 gdf.plot(ax=ax, linewidth=0.3, color=cmap(norm(mask)), aspect=None, rasterized=False)
@@ -278,18 +280,3 @@ if __name__ == '__main__':
 
     setproctitle(f"{args.exp_name}@ZihanYu")
     main(args)
-
-"""
-python run_gnnexplainer.py \
-    --name "run_gnnexplainer" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分" \
-    --model_path "./logs/不使用交通分配的特征-不按城市分/model_best.pth" \
-    --edge1_features capacity shortest_route_count free_flow_time \
-    --edge2_features
-
-python run_gnnexplainer.py \
-    --name "run_gnnexplainer" \
-    --save_dir "./logs/只使用100cities训练-new2" \
-    --model_path "./logs/只使用100cities训练-new2/model_best.pth" \
-
-    """

@@ -196,7 +196,7 @@ def load_resilience(args, total_travel_time, disrupted_travel_time, save_path):
 def load_shortest_routes(args, aem, original_network, free_assig_results, save_path):
     save_file = save_path / 'shortest_routes.csv.gz'
     if not save_file.exists():
-        ## 找最重要的 OD pairs
+        ## Find the most important OD pairs.
         tmp = np.copy(aem.matrix['matrix'])
         tmp -= np.diag(np.diag(tmp))
         if tmp.size > args.od_pairs_num:
@@ -207,7 +207,7 @@ def load_shortest_routes(args, aem, original_network, free_assig_results, save_p
         col = topk % aem.matrix['matrix'].shape[1] + 1
         value = aem.matrix['matrix'][row-1, col-1]
 
-        ## 找最短路
+        ## Find shortest routes.
         shortest_paths = {}
         graph = nx.from_pandas_edgelist(pd.concat([
             original_network[['a_node', 'b_node', 'link_id']], 
@@ -227,7 +227,7 @@ def load_shortest_routes(args, aem, original_network, free_assig_results, save_p
                 pass
             shortest_paths[(r, c)] = paths
         
-        # 保存
+        # Save results.
         shortest_paths = pd.DataFrame(shortest_paths.items(), columns=['OD', 'Paths'])
         shortest_paths.to_csv(save_file, index=False, compression='gzip')
         _logger.info(f"Saved shortest routes to {save_file}")
@@ -244,15 +244,17 @@ def main(args):
     save_data_dir = Path(args.save_data_dir)
     for dataset in args.datasets:
         ## Read Network & OD data
-        aem, original_network, index = read_data(dataset)
+        aem, original_network, index = read_data(
+            dataset, data_root_path=args.raw_data_dir
+        )
         num_links = len(original_network)
 
         ## Prepare samples to generate
-        # if args.fix_existing: # 修复已有的 sample 中缺失的结果
+        # if args.fix_existing: # Repair missing results in an existing sample.
         #     loader = [i.name for i in sorted((save_data_dir / dataset).iterdir()) if i.is_dir()]
-        # elif not args.augment_OD: # 用 raw OD 生成一个 sample
+        # elif not args.augment_OD: # Generate one sample from the raw OD matrix.
         loader = ['raw']
-        # elif args.augment_OD_num: # 用增广 OD 生成 augment_OD_num 个 sample
+        # elif args.augment_OD_num: # Generate augment_OD_num augmented samples.
         #     loader = [None] * args.augment_OD_num
         # else:
         #     raise NotImplementedError("Either --fix-existing, --no-augment-OD or --augment-OD-num should be set.")
@@ -307,7 +309,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("--name", type=str, default='speed_test')
+    parser.add_argument("--name", type=str, default='speed_test_simulation')
     parser.add_argument('--seed', type=int, default=43)
     parser.add_argument("--fix_existing", action='store_true', help="Fix the existing samples.")
     parser.add_argument('--skip_existing', action='store_true', help="Skip the existing samples.")
@@ -319,8 +321,9 @@ if __name__ == "__main__":
     parser.add_argument("--new_sample_num", action='store_true', help="Wherether --sample_num refers to additional number.")
     parser.add_argument("--od_pairs_num", type=int, default=100, help="Number of OD pairs to analyze.")
     parser.add_argument("--shortest_path_num", type=int, default=1, help="Number of shortest paths to analyze.")
-    parser.add_argument("--save_data_dir", type=str, default='./logs/speed_test/results', help="Root path to save the data.")
-    parser.add_argument("--save_log_dir", type=str, default="./logs/speed_test", help="Directory to save the results.")
+    parser.add_argument("--save_data_dir", type=str, default='./logs/speed_test_simulation/results', help="Root path to save the data.")
+    parser.add_argument("--save_log_dir", type=str, default="./logs/speed_test_simulation", help="Directory to save the results.")
+    parser.add_argument("--raw_data_dir", type=str, default='./data/raw', help="Root path containing the raw networks.")
     parser.add_argument("--datasets", type=str, nargs='+', default=[
         "0_New York city","1_Los Angeles city","2_Chicago city","3_Houston city","4_Phoenix city",
         "5_Philadelphia city","6_San Antonio city","7_San Diego city","8_Dallas city","9_San Jose city",
@@ -343,7 +346,8 @@ if __name__ == "__main__":
         "410_Santa Barbara city","411_Springdale city","412_Troy city","413_Citrus Heights city","414_Ogden city",
         "415_Duluth city","416_Deerfield Beach city","417_Town _n_ Country CDP","418_Manteca city","419_Temple city",
 
-        # Remove Github 数据集和 GlobalSouth 数据集：做可解释性分析时发现有 outlier，分布也和 100 cities 差别较大
+        # Exclude the GitHub and Global South datasets: they contain outliers and
+        # differ substantially from the 100-city distribution.
         # "Ahmedabad","Bandung","Bengaluru","Bogotá","Bucaramanga",
         # "Cartagena","Chennai","Cúcuta","Delhi","Depok",
         # "Ecatepec","Guadalajara","Hyderabad","Ibagué",

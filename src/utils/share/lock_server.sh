@@ -1,11 +1,17 @@
-# 通过 python ./share/lock_server.py 启动服务器
-# 然后 source ./share/lock_server.sh 引用 allocate
-# 然后 allocate "http://server-ip:port" "task_name" 来申请任务锁
+# Start the server from the repository root with:
+# PYTHONPATH=. python src/utils/share/lock_server.py
+# Source this file to make the allocate function available.
+# Set LOCK_SERVER=http://server-ip:port to coordinate across machines.
+# If LOCK_SERVER is empty (the default), every task is accepted locally.
 allocate() {
-    local server="$1" # http://server-ip:port
+    local server="$1" # Optional: http://server-ip:port
     local taskname="$2"
 
-    # 🎨 颜色定义
+    if [[ -z "$server" ]]; then
+        return 0
+    fi
+
+    # Terminal colors
     local bold="\033[1m"
     local green="\033[1;38;5;82m"
     local yellow="\033[1;38;5;220m"
@@ -14,7 +20,7 @@ allocate() {
 
     local payload="{\"task\":\"${taskname}\",\"owner\":\"$(hostname)\"}"
     local response=$(
-        curl -s --max-time 10 -X POST "$LOCK_SERVER/claim" -H "Content-Type: application/json" -d "$payload" 2>/dev/null
+        curl -s --max-time 10 -X POST "$server/claim" -H "Content-Type: application/json" -d "$payload" 2>/dev/null
     )
     if [[ $? -ne 0 || -z "$response" ]]; then
         echo -e "${bold}${red}[ERROR] Failed to reach lock server at ${server}.${reset}"

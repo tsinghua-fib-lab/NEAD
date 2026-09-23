@@ -90,7 +90,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('--name', type=str, default='speed_test2')
+    parser.add_argument('--name', type=str, default='speed_test_surrogate')
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--num_epochs', type=int, default=300)
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     parser.add_argument('--od_spec_dim', type=int, default=10)
     parser.add_argument('--od_dist_dim', type=int, default=64)
     parser.add_argument('--consider_delay_factor', action='store_true')
-    parser.add_argument('--save_dir', type=str, default='./logs/speed_test2')
+    parser.add_argument('--save_dir', type=str, default='./logs/speed_test_surrogate')
     parser.add_argument('--skip_existing', action='store_true', default=False)
     parser.add_argument('--model_path', type=str, required=True)
     parser.add_argument('--exp_name', type=str, default=None)
@@ -183,18 +183,3 @@ if __name__ == '__main__':
 
     setproctitle(f"{args.exp_name}@ZihanYu")
     main(args)
-
-"""
-python run_gnnexplainer.py \
-    --name "run_gnnexplainer" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分" \
-    --model_path "./logs/不使用交通分配的特征-不按城市分/model_best.pth" \
-    --edge1_features capacity shortest_route_count free_flow_time \
-    --edge2_features
-
-python run_gnnexplainer.py \
-    --name "run_gnnexplainer" \
-    --save_dir "./logs/只使用100cities训练-new2" \
-    --model_path "./logs/只使用100cities训练-new2/model_best.pth" \
-
-    """

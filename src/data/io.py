@@ -6,14 +6,29 @@ import os
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+from pathlib import Path
 
 from aequilibrae.matrix import AequilibraeMatrix
 from shapely.geometry import Point
 from sqlalchemy import create_engine
 
 
-def read_data(dataset_name: str, cwd: str=None):
-    if cwd:
+def infer_raw_data_dir(data_path):
+    """Infer a raw-data directory from an augmentation sample path."""
+    augmentation_dir = Path(data_path).parent.parent
+    if augmentation_dir.name == "augmentation":
+        raw_dir_name = "raw"
+    elif augmentation_dir.name.startswith("augmentation_"):
+        raw_dir_name = augmentation_dir.name.replace("augmentation_", "raw_", 1)
+    else:
+        raise ValueError(f"Cannot infer a raw-data directory from {data_path}")
+    return augmentation_dir.parent / raw_dir_name
+
+
+def read_data(dataset_name: str, cwd: str=None, data_root_path=None):
+    if data_root_path is not None:
+        data_root_path = os.fspath(data_root_path)
+    elif cwd:
         data_root_path = os.path.join(cwd, "data", "raw")
     else:
         data_root_path = os.path.join(os.getcwd(), "data", "raw")
@@ -56,9 +71,8 @@ def read_data(dataset_name: str, cwd: str=None):
         invalid = (network["free_flow_time"] == np.inf) & (network['length'] == 0.0)
         network['free_flow_time'] = network['free_flow_time'].mask(invalid, 0.01).clip(upper=10000)
     if dataset_name == "Winnipeg-Asymmetric":
-        # 这个数据集中只有 network.a_node.min() == len(index) + 1
-        # 说明只有从 non-zone 到 zone 的 link，没有从 zone 到 non-zone 的 link
-        # 所以需要添加一些反向的 link
+        # This dataset only contains links from non-zone nodes to zone nodes,
+        # so add the missing reverse links from zones to non-zone nodes.
         add = network[network.b_node.isin(index)].copy()
         add.a_node, add.b_node = add.b_node, add.a_node
         network = pd.concat([network, add], ignore_index=True)
@@ -138,4 +152,3 @@ def read_nodes(dataset_name, data_root_path):
     df['geometry'] = df.apply(lambda row: Point(row["x"], row["y"]), axis=1)
     gdf = gpd.GeoDataFrame(df, geometry="geometry")
     return gdf
-

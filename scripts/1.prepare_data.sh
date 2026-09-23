@@ -1,4 +1,8 @@
 #!/bin/bash
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT" || exit 1
+export PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+
 # set -euo pipefail
 # zsh: enable "pipefail" if possible
 # [[ -n "${ZSH_VERSION:-}" ]] && setopt localoptions pipefail 2>/dev/null || true
@@ -9,10 +13,10 @@ export MKL_NUM_THREADS=${MKL_NUM_THREADS:-6}
 export NUMEXPR_NUM_THREADS=${NUMEXPR_NUM_THREADS:-6}
 export OPENBLAS_NUM_THREADS=${OPENBLAS_NUM_THREADS:-6}
 export VECLIB_MAXIMUM_THREADS=${VECLIB_MAXIMUM_THREADS:-6}
-input_file="./data/globalsouth_cities.txt"   # default: file containing city per line
+input_file="./data/cities_globalsouth.txt"   # file containing one city per line
 
-source ./share/lock_server.sh
-LOCK_SERVER="http://rl3.yumeow.site:16699"
+source ./src/utils/share/lock_server.sh
+LOCK_SERVER="${LOCK_SERVER:-}"
 
 max_jobs=${MAX_JOBS:-6}   # max concurrent background jobs (can override via env)
 current_jobs=0
@@ -48,7 +52,8 @@ while IFS= read -r city || [[ -n "$city" ]]; do
             --name "${city}_no_augment_OD" \
             --dataset "${city}" \
             --no-augment-OD \
-            --save_data_dir ./data/globalsouth \
+            --raw_data_dir ./data/raw_globalsouth \
+            --save_data_dir ./data/augmentation_globalsouth \
             &
         
         sleep 2
@@ -64,7 +69,8 @@ while IFS= read -r city || [[ -n "$city" ]]; do
                 --augment-OD \
                 --augment-OD-num 1 \
                 --max-sample-num 20 \
-                --save_data_dir ./data/globalsouth \
+                --raw_data_dir ./data/raw_globalsouth \
+                --save_data_dir ./data/augmentation_globalsouth \
                 &
             
             sleep 2

@@ -19,7 +19,6 @@ class EdgemaskDataset(D.Dataset):
         resilience_map = resilience_map.set_index(["dataset", "dirname"])
         self.resilience_map = resilience_map
 
-        # mean_std_path = './logs/不使用交通分配的特征-不按城市分/mean_std.json'
         mean_std_path = Path(args.data_dir).parent.parent / 'mean_std.json'
         with open(mean_std_path, 'r') as f:
             mean_std = json.load(f)

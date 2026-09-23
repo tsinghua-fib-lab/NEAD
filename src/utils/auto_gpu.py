@@ -64,7 +64,7 @@ class AutoGPU:
                     del fuck_cuda
                     torch.cuda.reset_peak_memory_stats(
                         device
-                    )  # 不要让 fuck_cuda 影响 torch.cuda.max_memory_allocated
+                    )  # Keep the temporary reservation out of peak-memory statistics.
                     return device
                 except Exception:
                     torch.cuda.empty_cache()

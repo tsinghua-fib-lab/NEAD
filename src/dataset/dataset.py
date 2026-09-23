@@ -10,7 +10,7 @@ from collections import defaultdict
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 from sklearn.decomposition import TruncatedSVD
-from ..data.io import read_data
+from ..data.io import infer_raw_data_dir, read_data
 
 _logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ class ResilienceDataset(DATA.Dataset):
                 _logger.warning(f'Please rename {path}/result_obs.csv.gz to free_assignment.csv.gz')
                 return False
 
-            # 过滤掉数据文件不完整的文件夹
+            # Exclude directories with incomplete data files.
             for file in [
                 'od.csv.gz', 
                 'free_assignment.csv.gz',
@@ -72,8 +72,8 @@ class ResilienceDataset(DATA.Dataset):
                 if not (path / file).exists():
                     _logger.warning(f'Missing file {file} in {path}, skipping this dataset.')
                     return False
-            # 过滤掉 Resilience 不正常的文件夹
-            if False: # （太慢了，不用了）
+            # Optional resilience sanity check (disabled because it is too slow).
+            if False:
                 travel_time = lambda df: (df['matrix_ab'] * df['Congested_Time_AB']).sum()
                 df = pd.read_csv(path / 'free_assignment.csv.gz', compression='gzip')
                 t0 = travel_time(df)
@@ -87,11 +87,12 @@ class ResilienceDataset(DATA.Dataset):
             return True
         self.datasets = [(path.parent.name, path) for path in path_list if is_valid(path)]
 
-    def set_mean_std(self, mean_std=None):
+    def set_mean_std(self, mean_std=None, num_workers=0):
         if mean_std is None:
             torch.multiprocessing.set_sharing_strategy('file_system')
             loader = torch.utils.data.DataLoader(
-                self, batch_size=1, collate_fn=self.collate_fn, shuffle=False, num_workers=8, drop_last=False
+                self, batch_size=1, collate_fn=self.collate_fn, shuffle=False,
+                num_workers=num_workers, drop_last=False
             )
             features = defaultdict(list)
             for data in tqdm(loader, desc='Calculating mean and std', total=len(self)):
@@ -117,7 +118,7 @@ class ResilienceDataset(DATA.Dataset):
 
     def calc_features_with_cache(self, index):
         dataset, path = self.datasets[index]
-        if self.cache_to is None: # 不使用缓存
+        if self.cache_to is None: # Do not use a cache.
             return self.calc_features(index)
         else:
             cache_file = Path(self.cache_to) / dataset / f"{path.name}.pkl"
@@ -170,7 +171,8 @@ class ResilienceDataset(DATA.Dataset):
                 mean(0, 20%, 40%, 60%, 80%, 100% disrupted) / free_flow_time
         """
         dataset, path = self.datasets[index]
-        _, network, _ = read_data(dataset)
+        raw_data_dir = infer_raw_data_dir(path)
+        _, network, _ = read_data(dataset, data_root_path=raw_data_dir)
         topology = np.stack([network['a_node'].values, network['b_node'].values], axis=0) - 1
         capacity = network['capacity'].values
         free_flow_time = network['free_flow_time'].values

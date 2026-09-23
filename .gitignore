@@ -2,6 +2,10 @@ __pycache__/
 *.py[cod]
 
 /data/augmentation/
+/data/augmentation_globalsouth/
 /data/raw/
+/data/raw_globalsouth/
+/data/raw_github/
+/data/.cache/
 /logs/
 /venv/

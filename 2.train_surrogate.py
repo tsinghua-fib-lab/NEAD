@@ -59,7 +59,7 @@ def main(args):
         consider_delay_factor=args.consider_delay_factor,
         cache_to='./data/.cache/'
     )
-    dataset.set_mean_std()
+    dataset.set_mean_std(num_workers=args.num_workers)
     _logger.info(dataset.mean_std)
     with open(save_path / "mean_std.json", "w") as f:
         f.write(json.dumps(dataset.mean_std, indent=4))
@@ -135,10 +135,10 @@ def main(args):
 
     ## Reload Checkpoint
     if args.reload_checkpoint is not None:
-        # 如果指定了 checkpoint 路径，则从该路径加载
+        # Load the explicitly specified checkpoint when provided.
         checkpoint_path = Path(args.reload_checkpoint)
     elif (save_path / "checkpoint.pth").exists():
-        # 如果当前保存路径下存在 checkpoint，则从该路径加载
+        # Otherwise, resume from a checkpoint in the current output directory.
         checkpoint_path = save_path / "checkpoint.pth"
     else:
         checkpoint_path = None
@@ -254,7 +254,7 @@ def main(args):
 
         ## Save Metrics
         with open(save_path / "metrics.jsonl", 'a') as f:
-            f.write(json.dumps(metrics) + '\n')
+            f.write(json.dumps(metrics, default=str) + '\n')
 
         ## Plot Figure
         fig = plot(metrics)
@@ -284,11 +284,11 @@ def main(args):
         if False:
             peak = torch.cuda.max_memory_allocated(args.device) / 1024 / 1024
             reserved_raw = torch.cuda.memory_reserved(args.device) / 1024 / 1024
-            torch.cuda.empty_cache() # 释放 reserved 但是未被 allocated 的 block
+            torch.cuda.empty_cache() # Release reserved but unallocated blocks.
             reserved_new = torch.cuda.memory_reserved(args.device) / 1024 / 1024
-            if reserved_new < peak: # 释放了过多的显存，之后可能会 OOM
+            if reserved_new < peak: # Releasing too much memory may cause a later OOM.
                 allocated = torch.cuda.memory_allocated(args.device) / 1024 / 1024
-                if (keep_MB := int(np.ceil(peak - allocated))) > 0: # 把需要的显存再占回来
+                if (keep_MB := int(np.ceil(peak - allocated))) > 0: # Re-reserve the required memory.
                     try:
                         keep_cuda = AutoGPU.fuck_gpu(device=args.device, memory_MB=keep_MB, block_MB=None)
                         del keep_cuda
@@ -345,7 +345,7 @@ def plot(metrics):
         "Dataset": metrics["dataset"],
     })
     try:
-        # 按 all_data 的顺序排序
+        # Sort according to the order in all_data.csv.
         all_data = pd.read_csv("./data/all_data.csv", sep="\t")
         all_data = all_data[all_data.Dataset.isin(df.Dataset)]
         sortby = all_data.Dataset[all_data.Dataset]
@@ -421,7 +421,8 @@ if __name__ == "__main__":
         "410_Santa Barbara city","411_Springdale city","412_Troy city","413_Citrus Heights city","414_Ogden city",
         "415_Duluth city","416_Deerfield Beach city","417_Town _n_ Country CDP","418_Manteca city","419_Temple city",
 
-        # Remove Github 数据集和 GlobalSouth 数据集：做可解释性分析时发现有 outlier，分布也和 100 cities 差别较大
+        # Exclude the GitHub and Global South datasets: they contain outliers and
+        # differ substantially from the 100-city distribution.
         # "Ahmedabad","Bandung","Bengaluru","Bogotá","Bucaramanga",
         # "Cartagena","Chennai","Cúcuta","Delhi","Depok",
         # "Ecatepec","Guadalajara","Hyderabad","Ibagué",

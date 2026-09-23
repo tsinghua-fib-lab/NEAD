@@ -17,11 +17,10 @@ from setproctitle import setproctitle
 from absl import logging as absl_logging
 from src.utils.random import set_seed
 from src.utils.logger import init_logger
-from src.data.io import read_data
+from src.data.io import infer_raw_data_dir, read_data
 from src.data.analyze import get_disrupting_links
 from src.data.assignment import traffic_assignment
-
-from generate_data import load_od, load_free_assign, load_disrupt_assign, load_resilience, load_shortest_routes
+from src.pipeline.pipeline import load_od, load_free_assign, load_disrupt_assign, load_resilience, load_shortest_routes
 
 _logger = logging.getLogger('src')
 
@@ -34,7 +33,10 @@ def main(args):
     raw_data_path = Path(args.raw_data_path)
     dataset = raw_data_path.parent.name # e.g., '0_New York city'
     sample = raw_data_path.name # e.g., 'raw'
-    aem, original_network, index = read_data(dataset)
+    raw_data_dir = infer_raw_data_dir(raw_data_path)
+    aem, original_network, index = read_data(
+        dataset, data_root_path=raw_data_dir
+    )
 
     # Scale OD
     raw_od = aem.matrix['matrix'].copy()

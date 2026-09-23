@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 import shlex
@@ -8,8 +9,8 @@ import sympy as sp
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
-from socket import gethostname
 from pysr import PySRRegressor
+from socket import gethostname
 from argparse import ArgumentParser
 from setproctitle import setproctitle
 from sklearn.model_selection import train_test_split
@@ -152,7 +153,6 @@ def main(args):
     _logger.info("Pareto Front\n" + "\n".join(logs))
 
     if True:
-        import nd2py as nd
         import torch.utils.data as D
         from tqdm import tqdm
         from argparse import Namespace
@@ -160,7 +160,11 @@ def main(args):
         with open(Path(args.data_path).parent / 'args.json', 'r') as f:
             saved_args = Namespace(**json.load(f))
         dataset = LowdimDataset(saved_args, keep_mean_std=True)
-        loader = D.DataLoader(dataset, batch_size=None, shuffle=False, num_workers=12, drop_last=False, collate_fn=lambda x: x)
+        loader = D.DataLoader(
+            dataset, batch_size=None, shuffle=False,
+            num_workers=saved_args.num_workers, drop_last=False,
+            collate_fn=lambda x: x,
+        )
         records = {'path': [], 'true': [], **{f'pred-{idx}': [] for idx in range(len(results))}}
         for data, true, path in tqdm(loader, dynamic_ncols=True, disable=False):
             records['path'].append(path.parent.name + '-' + path.name)
@@ -181,10 +185,9 @@ def main(args):
             #         raise ValueError(f'Unknown feature: {k}')
             #     X[k] = X[k] * std + mean
             for idx, row in results.iterrows():
-                # f = sp.lambdify([sp.symbols(args.features)], row['rescaled_equation'], modules='numpy')
-                # output = f(X)
-                f = nd.parse(row['rescaled_equation'])
-                output = f.eval(X)
+                symbols = sp.symbols(args.features)
+                f = sp.lambdify(symbols, sp.sympify(row['rescaled_equation']), modules='numpy')
+                output = f(*(X[col].to_numpy() for col in args.features))
                 if isinstance(output, (float, int)):
                     pred = output
                 else:
@@ -316,81 +319,3 @@ if __name__ == '__main__':
     # Start Running
     setproctitle(f"{args.exp_name}@ZihanYu")
     main(args)
-
-"""
-python search.py \
-    --name "search_0.3" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_features" \
-    --data_path "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_features/threshold_0.3.csv" \
-    --features capacity shortest_route_count free_flow_time spec0 spec_avg dist0 dist1 dist63
-
-python search.py \
-    --name "search_0.6_normalizeX" \
-    --no_normalize_y \
-    --data_path "logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_features/threshold_0.6_ratio.csv" \
-    --save_dir "logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_features" \
-    --features capacity shortest_route_count free_flow_time spec0 dist0 dist1
-
-python search.py \
-    --name "normalize_x" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_splitbycity" \
-    --data_path "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_splitbycity/sr.csv.gz" \
-    --features capacity shortest_route_count free_flow_time spec0 dist0 \
-    --target output \
-    --no_normalize_y
-
-python search.py \
-    --name "normalize_x_lt30" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_lt30" \
-    --data_path "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_lt30/sr.csv.gz" \
-    --features capacity shortest_route_count free_flow_time spec0 dist0 \
-    --no_normalize_y \
-    --target output \
-    --subset lt30
-
-python search.py \
-    --name "normalize_xy_lt30" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_lt30" \
-    --data_path "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_lt30/sr.csv.gz" \
-    --features capacity shortest_route_count free_flow_time spec0 dist0 \
-    --target output \
-    --subset lt30
-
-python search.py \
-    --name "normalize_x_gt30" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_gt30" \
-    --data_path "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_gt30/sr.csv.gz" \
-    --features capacity shortest_route_count free_flow_time spec0 dist0 \
-    --no_normalize_y \
-    --target output \
-    --subset gt30
-
-python search.py \
-    --name "normalize_xy_gt30" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_gt30" \
-    --data_path "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions/fit_0.5ratio_5features_gt30/sr.csv.gz" \
-    --features capacity shortest_route_count free_flow_time spec0 dist0 \
-    --target output \
-    --subset gt30
-
-在 RL2 上：
-export JULIA_BINARY=$(pwd)/julia-1.11.2/bin/julia
-export PATH=$(pwd)/julia-1.11.2/bin:$PATH
-rm -rf /data4/yuzihan/WorkSpace/28-TrafficResilience/TrafficResilience/venv/julia_env
-
-python search.py \
-    --name "normalize_x" \
-    --save_dir "./logs/只使用100cities训练-new2/run_gnnexplainer/get_lowdim_functions/fit_0.9_8features" \
-    --data_path "./logs/只使用100cities训练-new2/run_gnnexplainer/get_lowdim_functions/fit_0.9_8features/sr.csv.gz" \
-    --features capacity volume voc travel_time disrupted_rank shortest_route_count spec0 dist0 \
-    --target output
-
-python search.py \
-    --name "normalize_x" \
-    --save_dir "./logs/只使用100cities训练-new2/run_gnnexplainer/get_lowdim_functions/fit_0.5_7features" \
-    --data_path "./logs/只使用100cities训练-new2/run_gnnexplainer/get_lowdim_functions/fit_0.5_7features/sr.csv.gz" \
-    --features capacity volume voc travel_time shortest_route_count spec0 dist0 \
-    --target output
-
-"""
-

@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from argparse import ArgumentParser
 from src.utils.tag2ansi import tag2ansi
 from src.utils.logger import init_logger
-from share.get_ip import get_local_ip
+from src.utils.share.get_ip import get_local_ip
 
 _logger = logging.getLogger('src')
 
@@ -57,7 +57,7 @@ def status():
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument("--lock_file", type=str, default='./share/lock_server.json', help="Path to the lock file")
+    parser.add_argument("--lock_file", type=str, default='./src/utils/share/lock_server.json', help="Path to the lock file")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the server on")
     parser.add_argument("--port", type=int, default=16699, help="Port to run the server on")
     args = parser.parse_args()

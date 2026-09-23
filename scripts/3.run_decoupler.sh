@@ -1,4 +1,8 @@
 #!/bin/bash
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT" || exit 1
+export PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+
 # set -euo pipefail
 # zsh: enable "pipefail" if possible
 # [[ -n "${ZSH_VERSION:-}" ]] && setopt localoptions pipefail 2>/dev/null || true
@@ -9,10 +13,8 @@ export MKL_NUM_THREADS=${MKL_NUM_THREADS:-6}
 export NUMEXPR_NUM_THREADS=${NUMEXPR_NUM_THREADS:-6}
 export OPENBLAS_NUM_THREADS=${OPENBLAS_NUM_THREADS:-6}
 export VECLIB_MAXIMUM_THREADS=${VECLIB_MAXIMUM_THREADS:-6}
-input_file="./data/cities.txt"   # default: file containing city per line
-
-source ./share/lock_server.sh
-LOCK_SERVER="http://rl3.yumeow.site:16699"
+source ./src/utils/share/lock_server.sh
+LOCK_SERVER="${LOCK_SERVER:-}"
 
 max_jobs=${MAX_JOBS:-6}   # max concurrent background jobs (can override via env)
 current_jobs=0
@@ -32,19 +34,19 @@ run_command() {
     args=(
         "$@"  # Other arguments passed to the script
     )
-    echo "[$(date '+%H:%M:%S')] python run_gnnexplainer.py ${args[@]}"
-    python run_gnnexplainer.py "${args[@]}"
+    echo "[$(date '+%H:%M:%S')] python 3.run_decoupler.py ${args[@]}"
+    python 3.run_decoupler.py "${args[@]}"
 }
 
 for sample in ./data/augmentation/*/*; do
-    star1=$(basename "$(dirname "$sample")")  # 上一级目录名
-    star2=$(basename "$sample")               # 文件名
-    for explain_for in feature structure; do  # 解释类型
+    star1=$(basename "$(dirname "$sample")")  # Parent directory name
+    star2=$(basename "$sample")               # Sample directory name
+    for explain_for in feature structure; do  # Explanation type
 
-        train_log_path="./logs/train/20251119_with-traffic-assignment_155328_LM2"
-        allocate "${LOCK_SERVER}" "with-traffic-assignment-explain-${star1}-${star2}-${explain_for}" && \
+        train_log_path="./logs/train/paper_us_assignment_informed"
+        allocate "${LOCK_SERVER}" "assignment-informed-explain-${star1}-${star2}-${explain_for}" && \
         run_command \
-            --name "with-traffic-assignment-explain-${star1}-${star2}-${explain_for}" \
+            --name "assignment-informed-explain-${star1}-${star2}-${explain_for}" \
             --data_path "${sample}" \
             --explain_for ${explain_for} \
             --model_path "${train_log_path}/best_model.pth" \
@@ -55,10 +57,10 @@ for sample in ./data/augmentation/*/*; do
             &
         ((++current_jobs >= max_jobs)) && { wait -n; ((current_jobs--)); }
 
-        train_log_path="./logs/train/20251119_wo-traffic-assignment_160956_LM2"
-        allocate "${LOCK_SERVER}" "wo-traffic-assignment-explain-${star1}-${star2}-${explain_for}" && \
+        train_log_path="./logs/train/paper_us_static"
+        allocate "${LOCK_SERVER}" "static-explain-${star1}-${star2}-${explain_for}" && \
         run_command \
-            --name "wo-traffic-assignment-explain-${star1}-${star2}-${explain_for}" \
+            --name "static-explain-${star1}-${star2}-${explain_for}" \
             --data_path "${sample}" \
             --explain_for ${explain_for} \
             --model_path "${train_log_path}/best_model.pth" \

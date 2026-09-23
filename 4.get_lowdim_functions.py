@@ -298,7 +298,8 @@ def main(args):
                     mean, std = dataset.mean_std[col]
                 df[col] = df[col] * std + mean
             if len(df) > args.sample_num:
-                df = df.sample(n=args.sample_num, random_state=args.seed)  # 随机采样 sample_num 个点，防止数据量过大
+                # Randomly subsample to keep the exported road-level dataset manageable.
+                df = df.sample(n=args.sample_num, random_state=args.seed)
             df_detail_list.append(df)
         df_mean = pd.DataFrame(df_list)
         df_detail = pd.concat(df_detail_list, ignore_index=True)
@@ -500,46 +501,3 @@ if __name__ == '__main__':
     # Start Running
     setproctitle(f"{args.exp_name}@ZihanYu")
     main(args)
-
-
-"""
-python get_lowdim_functions.py \
-    --name "fit_0.3_5features" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions" \
-    --data_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/results" \
-    --edge1_features capacity shortest_route_count free_flow_time \
-    --edge2_features \
-    --used_features capacity shortest_route_count free_flow_time spec0 dist0 \
-    --threshold 0.3
-
-python get_lowdim_functions.py \
-    --name "new-fit_0.5ratio_5features_splitbycity" \
-    --save_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/get_lowdim_functions" \
-    --data_dir "./logs/不使用交通分配的特征-不按城市分/run_gnnexplainer/results" \
-    --edge1_features capacity shortest_route_count free_flow_time \
-    --edge2_features \
-    --used_features capacity shortest_route_count free_flow_time spec0 dist0 \
-    --threshold 0.5 --by_ratio \
-    --split_by_city --dataset_split 0.8
-
-python get_lowdim_functions.py \
-    --name "fit_0.5_8features" \
-    --save_dir "./logs/只使用100cities训练-new2/run_gnnexplainer/get_lowdim_functions" \
-    --data_dir "./logs/只使用100cities训练-new2/run_gnnexplainer/results" \
-    --edge1_features capacity volume voc travel_time disrupted_rank shortest_route_count \
-    --edge2_features diversity weighted_diversity \
-    --used_features capacity volume voc travel_time disrupted_rank shortest_route_count spec0 dist0 \
-    --threshold 0.5 --by_ratio \
-    --split_by_city --dataset_split 0.8
-
-python get_lowdim_functions.py \
-    --name "fit_0.5_7features" \
-    --save_dir "./logs/只使用100cities训练-new2/run_gnnexplainer/get_lowdim_functions" \
-    --data_dir "./logs/只使用100cities训练-new2/run_gnnexplainer/results" \
-    --edge1_features capacity volume voc travel_time disrupted_rank shortest_route_count \
-    --edge2_features diversity weighted_diversity \
-    --used_features capacity volume voc travel_time shortest_route_count spec0 dist0 \
-    --threshold 0.5 --by_ratio \
-    --split_by_city --dataset_split 0.8
-
-"""

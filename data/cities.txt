@@ -1,0 +1,100 @@
+0_New York city
+1_Los Angeles city
+2_Chicago city
+3_Houston city
+4_Phoenix city
+5_Philadelphia city
+6_San Antonio city
+7_San Diego city
+8_Dallas city
+9_San Jose city
+10_Austin city
+11_Jacksonville city
+12_Fort Worth city
+13_Columbus city
+14_Charlotte city
+15_Indianapolis city (balance)
+16_San Francisco city
+17_Seattle city
+18_Denver city
+19_Oklahoma City city
+100_Hialeah city
+101_San Bernardino city
+102_Tacoma city
+103_Port St. Lucie city
+104_Spring Valley CDP
+105_Huntsville city
+106_Modesto city
+107_Des Moines city
+108_Fontana city
+109_Moreno Valley city
+110_Frisco city
+111_Rochester city
+112_Fayetteville city
+113_Yonkers city
+114_Cape Coral city
+115_Worcester city
+116_Columbus city
+117_Salt Lake City city
+118_Little Rock city
+119_McKinney city
+200_Orange city
+201_Warren city
+202_Columbia city
+203_West Valley City city
+204_Hampton city
+205_Cedar Rapids city
+206_Dayton city
+207_Pasadena city
+208_Miramar city
+209_Victorville city
+210_Elizabeth city
+211_Stamford city
+212_Kent city
+213_Midland city
+214_Coral Springs city
+215_Sterling Heights city
+216_New Haven city
+217_Carrollton city
+218_Santa Clara city
+219_Fargo city
+300_Sandy Springs city
+301_El Monte city
+302_Hillsboro city
+303_Menifee city
+304_Green Bay city
+305_Rio Rancho city
+306_Concord city
+307_Davie town
+308_Nampa city
+309_Boulder city
+310_Jurupa Valley city
+311_Columbia CDP
+312_Inglewood city
+313_Spokane Valley city
+314_Renton city
+315_San Tan Valley CDP
+316_Burbank city
+317_Brockton city
+318_El Cajon city
+319_Rialto city
+400_Fort Smith city
+401_Clifton city
+402_Waukegan city
+403_Bloomington city
+404_Champaign city
+405_Greenville city
+406_San Leandro city
+407_Newton city
+408_Lawrence city
+409_Santa Fe city
+410_Santa Barbara city
+411_Springdale city
+412_Troy city
+413_Citrus Heights city
+414_Ogden city
+415_Duluth city
+416_Deerfield Beach city
+417_Town _n_ Country CDP
+418_Manteca city
+419_Temple city

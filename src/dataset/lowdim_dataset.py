@@ -30,7 +30,7 @@ class LowdimDataset(ResilienceDataset):
             cache_to=cache_to
         )
         if not keep_mean_std:
-            self.set_mean_std()
+            self.set_mean_std(num_workers=args.num_workers)
         self.args = args
 
     def __getitem__(self, idx):

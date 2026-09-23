@@ -1,4 +1,8 @@
 #!/bin/bash
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT" || exit 1
+export PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+
 # set -euo pipefail
 # zsh: enable "pipefail" if possible
 # [[ -n "${ZSH_VERSION:-}" ]] && setopt localoptions pipefail 2>/dev/null || true
@@ -8,10 +12,10 @@ export MKL_NUM_THREADS=${MKL_NUM_THREADS:-6}
 export NUMEXPR_NUM_THREADS=${NUMEXPR_NUM_THREADS:-6}
 export OPENBLAS_NUM_THREADS=${OPENBLAS_NUM_THREADS:-6}
 export VECLIB_MAXIMUM_THREADS=${VECLIB_MAXIMUM_THREADS:-6}
-input_file="./data/scale_capacity.txt"   # default: file containing city per line
+input_file="./data/cities.txt"   # file containing one city per line
 
-source ./share/lock_server.sh
-LOCK_SERVER="http://rl3.yumeow.site:16699"
+source ./src/utils/share/lock_server.sh
+LOCK_SERVER="${LOCK_SERVER:-}"
 
 max_jobs=${MAX_JOBS:-6}   # max concurrent background jobs (can override via env)
 current_jobs=0
@@ -34,10 +38,10 @@ run_command() {
         --disrupting_fraction {20..80..20}
         --seed 43
         --disrupting_strategy greedy
-        "$@"  # 额外传入的参数
+        "$@"  # Additional arguments passed to the script
     )
-    echo "[$(date '+%H:%M:%S')] python scale_od.py ${args[@]}"
-    python scale_od.py "${args[@]}"
+    echo "[$(date '+%H:%M:%S')] python scripts/scale_od.py ${args[@]}"
+    python scripts/scale_od.py "${args[@]}"
 }
 
 while IFS= read -r city || [[ -n "$city" ]]; do

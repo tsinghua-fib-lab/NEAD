@@ -13,11 +13,11 @@ from socket import gethostname
 from argparse import Namespace
 from argparse import ArgumentParser
 from setproctitle import setproctitle
-from src.data.io import read_data
+from src.data.io import infer_raw_data_dir, read_data
 from src.utils.random import set_seed
 from src.utils.logger import init_logger
 from src.dataset.lowdim_dataset import LowdimDataset
-from generate_data import load_od, load_free_assign, load_disrupt_assign, load_resilience, load_shortest_routes
+from src.pipeline.pipeline import load_od, load_free_assign, load_disrupt_assign, load_resilience, load_shortest_routes
 
 _logger = logging.getLogger('src')
 
@@ -30,10 +30,12 @@ def main(args):
     raw_data_path = Path(args.raw_data_path)
     cityname = raw_data_path.parent.name # e.g., '0_New York city'
     sample = raw_data_path.name # e.g., 'raw'
-    aem, original_network, index = read_data(cityname)
+    aem, original_network, index = read_data(
+        cityname, data_root_path=infer_raw_data_dir(raw_data_path)
+    )
 
     ## Scale Capacity
-    # 准备特征数据
+    # Prepare feature data.
     if args.select_by not in ['all', 'random']:
         saved_args = Namespace(
             data_dir="./data/augmentation",
@@ -60,7 +62,7 @@ def main(args):
         gen = iter(loader)
         data, true, path = next(gen)
         df_X = pd.DataFrame(data, columns=saved_args.used_features)
-    # 选择要扩容的道路 idx
+    # Select the roads whose capacity will be expanded.
     select_num = int(len(original_network) * args.select_ratio)
     if args.select_by == 'all':
         select_idx = np.arange(len(original_network))
@@ -90,7 +92,7 @@ def main(args):
         f"for {len(select_idx)}/{len(original_network)} roads "
         f"selected by {args.select_by}."
     )
-    # 保存 select_idx 或者校验一致性
+    # Save the selected indices, or verify consistency with an existing selection.
     save_file = save_path / 'select_idx.txt'
     if save_file.exists():
         saved_select_idx = np.loadtxt(save_file)
