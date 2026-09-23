@@ -20,7 +20,7 @@ PySR also installs and uses Julia; its first run may take additional time to pre
 
 ## Data
 
-Large datasets are distributed separately. Place the U.S., Global South, and GitHub raw networks in `data/raw/`, `data/raw_globalsouth/`, and `data/raw_github/`; place the generated U.S. and Global South scenarios in `data/augmentation/` and `data/augmentation_globalsouth/`. Small metadata and city-list files are included.
+The complete dataset is available on [Kaggle](https://www.kaggle.com/datasets/meowyu/nead-transportation-resilience-data). Place the U.S., Global South, and GitHub raw networks in `data/raw/`, `data/raw_globalsouth/`, and `data/raw_github/`; place the generated U.S. and Global South scenarios in `data/augmentation/` and `data/augmentation_globalsouth/`. Small metadata and city-list files are included in this repository.
 
 ## Workflow
 

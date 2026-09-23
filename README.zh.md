@@ -20,7 +20,7 @@ PySR 会安装并调用 Julia，首次运行可能需要额外时间准备 Julia
 
 ## 数据
 
-大体积数据将通过 GitHub 之外的渠道发布。请将美国、全球南方和 GitHub 原始路网分别放入 `data/raw/`、`data/raw_globalsouth/` 和 `data/raw_github/`，将美国和全球南方的生成场景分别放入 `data/augmentation/` 和 `data/augmentation_globalsouth/`。仓库已包含体积较小的元信息和城市列表。
+完整数据集已发布在 [Kaggle](https://www.kaggle.com/datasets/meowyu/nead-transportation-resilience-data)。请将美国、全球南方和 GitHub 原始路网分别放入 `data/raw/`、`data/raw_globalsouth/` 和 `data/raw_github/`，将美国和全球南方的生成场景分别放入 `data/augmentation/` 和 `data/augmentation_globalsouth/`。仓库已包含体积较小的元信息和城市列表。
 
 ## 运行流程
 
