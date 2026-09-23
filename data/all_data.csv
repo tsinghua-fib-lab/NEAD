@@ -1,0 +1,159 @@
+Source	Dataset	Edges	Nodes	Zones	ODs
+100cities	0_New York city	182048	44827	1940	1940
+100cities	1_Los Angeles city	127036	23439	532	532
+100cities	2_Chicago city	170723	35762	882	882
+100cities	3_Houston city	214644	47285	393	393
+100cities	4_Phoenix city	211675	43076	357	357
+100cities	5_Philadelphia city	221439	48378	642	642
+100cities	6_San Antonio city	180608	36780	304	304
+100cities	7_San Diego city	122410	26817	295	295
+100cities	8_Dallas city	196461	43072	366	366
+100cities	9_San Jose city	135975	30721	289	289
+100cities	10_Austin city	121592	26522	207	207
+100cities	11_Jacksonville city	124304	26284	145	145
+100cities	12_Fort Worth city	173622	35324	207	207
+100cities	13_Columbus city	146881	29450	271	271
+100cities	14_Charlotte city	146178	33797	213	213
+100cities	15_Indianapolis city (balance)	173356	35935	244	244
+100cities	16_San Francisco city	78352	16314	282	282
+100cities	17_Seattle city	144854	30440	228	228
+100cities	18_Denver city	164569	32876	291	291
+100cities	19_Oklahoma City city	136210	26936	252	252
+100cities	100_Hialeah city	187450	39900	364	364
+100cities	101_San Bernardino city	89443	18132	155	155
+100cities	102_Tacoma city	118177	24217	150	150
+100cities	103_Port St. Lucie city	53732	11523	41	41
+100cities	104_Spring Valley CDP	151500	35759	282	282
+100cities	105_Huntsville city	69547	15210	68	68
+100cities	106_Modesto city	65915	13250	82	82
+100cities	107_Des Moines city	75692	15151	106	106
+100cities	108_Fontana city	110845	23357	198	198
+100cities	109_Moreno Valley city	59077	12522	105	105
+100cities	110_Frisco city	142399	32082	152	152
+100cities	111_Rochester city	86735	17238	182	182
+100cities	112_Fayetteville city	69112	15069	72	72
+100cities	113_Yonkers city	119469	26678	611	611
+100cities	114_Cape Coral city	81192	17235	71	71
+100cities	115_Worcester city	66101	13996	96	96
+100cities	116_Columbus city	54104	11197	68	68
+100cities	117_Salt Lake City city	98609	20310	156	156
+100cities	118_Little Rock city	85010	17513	83	83
+100cities	119_McKinney city	110382	24041	94	94
+100cities	200_Orange city	160607	36293	322	322
+100cities	201_Warren city	207801	41628	493	493
+100cities	202_Columbia city	72894	14836	86	86
+100cities	203_West Valley City city	125843	26068	173	173
+100cities	204_Hampton city	51648	11690	91	91
+100cities	205_Cedar Rapids city	45373	9078	46	46
+100cities	206_Dayton city	120335	24130	177	177
+100cities	207_Pasadena city	151178	29426	498	498
+100cities	208_Miramar city	94121	20792	189	189
+100cities	209_Victorville city	57180	10656	50	50
+100cities	210_Elizabeth city	197544	40236	584	584
+100cities	211_Stamford city	57444	12348	101	101
+100cities	212_Kent city	118308	25920	144	144
+100cities	213_Midland city	37909	7043	28	28
+100cities	214_Coral Springs city	100627	23869	213	213
+100cities	215_Sterling Heights city	174838	36126	329	329
+100cities	216_New Haven city	69894	14408	123	123
+100cities	217_Carrollton city	135603	33458	266	266
+100cities	218_Santa Clara city	158225	35707	333	333
+100cities	219_Fargo city	40141	7990	42	42
+100cities	300_Sandy Springs city	150343	35631	233	233
+100cities	301_El Monte city	190648	38752	532	532
+100cities	302_Hillsboro city	84177	17940	99	99
+100cities	303_Menifee city	71063	14998	78	78
+100cities	304_Green Bay city	46553	9930	54	54
+100cities	305_Rio Rancho city	67784	14286	51	51
+100cities	306_Concord city	68228	15230	70	70
+100cities	307_Davie town	102678	23835	213	213
+100cities	308_Nampa city	84996	17210	40	40
+100cities	309_Boulder city	50522	11130	61	61
+100cities	310_Jurupa Valley city	134212	28705	242	242
+100cities	311_Columbia CDP	69337	16877	123	123
+100cities	312_Inglewood city	225605	41596	877	877
+100cities	313_Spokane Valley city	74093	13892	82	82
+100cities	314_Renton city	130482	28266	179	179
+100cities	315_San Tan Valley CDP	43481	8917	29	29
+100cities	316_Burbank city	171817	32503	669	669
+100cities	317_Brockton city	87822	18725	124	124
+100cities	318_El Cajon city	84954	18408	206	206
+100cities	319_Rialto city	112695	23432	189	189
+100cities	400_Fort Smith city	40923	7716	38	38
+100cities	401_Clifton city	213031	43426	540	540
+100cities	402_Waukegan city	65536	13263	106	106
+100cities	403_Bloomington city	122396	26251	236	236
+100cities	404_Champaign city	32591	6246	40	40
+100cities	405_Greenville city	35040	7459	32	32
+100cities	406_San Leandro city	98880	20802	234	234
+100cities	407_Newton city	187281	41852	427	427
+100cities	408_Lawrence city	93262	19421	132	132
+100cities	409_Santa Fe city	34212	8136	40	40
+100cities	410_Santa Barbara city	21837	4581	44	44
+100cities	411_Springdale city	57792	11749	50	50
+100cities	412_Troy city	169590	35606	310	310
+100cities	413_Citrus Heights city	150125	32780	214	214
+100cities	414_Ogden city	63111	12566	79	79
+100cities	415_Duluth city	34043	6392	50	50
+100cities	416_Deerfield Beach city	109761	25998	233	233
+100cities	417_Town _n_ Country CDP	116021	24116	189	189
+100cities	418_Manteca city	41275	8557	57	57
+100cities	419_Temple city	37085	7521	29	29
+GlobalSouth	Ahmedabad	120192	67861	1165	1165
+Github	Anaheim	914	416	38	38
+Github	Austin	18961	7388	1117	1117
+GlobalSouth	Bandung	205612	116074	2538	2538
+Github	Barcelona	2522	930	108	108
+GlobalSouth	Bengaluru	232254	120256	1075	1075
+Github	Berlin-Center	28376	12981	865	865
+Github	Berlin-Friedrichshain	523	224	23	23
+Github	Berlin-Mitte-Center	871	397	36	36
+Github	Berlin-Mitte-Prenzlauerberg-Friedrichshain-Center	2184	974	98	98
+Github	Berlin-Prenzlauerberg-Center	749	352	38	38
+Github	Berlin-Tiergarten	766	359	26	26
+Github	Birmingham-England	33937	14639	898	898
+GlobalSouth	Bogotá	84921	52149	606	606
+Github	Braess-Example	5	4	2	2
+GlobalSouth	Bucaramanga	28072	16981	200	200
+GlobalSouth	Cartagena	27022	16277	185	185
+GlobalSouth	Chennai	102980	56692	758	758
+Github	chicago-regional	39017	12982	1778	1778
+Github	Chicago-Sketch	2949	933	386	386
+GlobalSouth	Cúcuta	27322	16347	134	134
+GlobalSouth	Delhi	204845	123463	2058	2058
+GlobalSouth	Depok	206204	117237	2154	2154
+Github	Eastern-Massachusetts	257	74	74	74
+GlobalSouth	Ecatepec	330070	203707	3049	3049
+Github	GoldCoast	11139	4783	1068	1068
+GlobalSouth	Guadalajara	69455	43902	1142	1142
+Github	Hessen-Asymmetric	6673	4660	228	228
+GlobalSouth	Hyderabad	129239	71500	851	851
+GlobalSouth	Ibagué	49050	29283	462	462
+GlobalSouth	Jaipur	69877	39218	623	623
+GlobalSouth	Kanpur	64604	36471	709	709
+GlobalSouth	Kolkata	139027	71899	1585	1585
+GlobalSouth	León	98777	62449	1640	1640
+GlobalSouth	Lucknow	76042	41996	707	707
+GlobalSouth	Makassar	30924	16506	258	258
+GlobalSouth	Medan	83069	43499	549	549
+GlobalSouth	Medellín	43082	25905	398	398
+GlobalSouth	Mérida	38134	23596	405	405
+GlobalSouth	Montería	20045	11046	157	157
+GlobalSouth	Mumbai	89404	52173	992	992
+Github	Munich	1872	742	285	285
+GlobalSouth	Palembang	26396	14286	238	238
+Github	Philadelphia	40002	13389	1489	1489
+GlobalSouth	Puebla City	193590	114449	2168	2168
+GlobalSouth	Pune	120344	66568	1197	1197
+GlobalSouth	Querétaro City	118127	69736	2104	2104
+GlobalSouth	Santa Marta	20499	12700	153	153
+GlobalSouth	Santiago de Cali	37051	24294	294	294
+GlobalSouth	Semarang	250382	128952	2813	2813
+Github	SiouxFalls	76	24	24	24
+GlobalSouth	Surabaya	191320	100092	2452	2452
+GlobalSouth	Surat	68421	39213	717	717
+Github	Sydney	75378	33113	3264	3264
+Github	Terrassa-Asymmetric	3264	1603	55	55
+GlobalSouth	Valledupar	8780	5292	104	104
+Github	Winnipeg	2836	1040	141	141
+Github	Winnipeg-Asymmetric	2535	1896	141	141
